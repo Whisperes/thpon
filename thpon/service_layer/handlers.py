@@ -19,11 +19,56 @@ def fill_init(cmd: commands.FillInit,
         field.fill_init()
         uow.commit()
 
+def fill_kill(event: events.Killed,
+              uow: unit_of_work.AbstractUnitOfWork):
+    with uow:
+        field = uow.fields.get(fid=event.fid)
+        if field is None:
+            raise 'No any field'
+
+        settos = field.find_setto()
+        field.kill_items(settos)
+        uow.commit()
+
+
+def shift(event: events.Killed,
+              uow: unit_of_work.AbstractUnitOfWork):
+    with uow:
+        field = uow.fields.get(fid=event.fid)
+        if field is None:
+            raise 'No any field'
+
+        field.shift_to_nones()
+        uow.commit()
+
+def fill(event: events.Filled,
+              uow: unit_of_work.AbstractUnitOfWork):
+    with uow:
+        field = uow.fields.get(fid=event.fid)
+        if field is None:
+            raise 'No any field'
+
+        field.fill_nones()
+        uow.commit()
+
+def swap(cmd: commands.Swap,
+              uow: unit_of_work.AbstractUnitOfWork):
+    with uow:
+        field = uow.fields.get(fid=cmd.fid)
+        if field is None:
+            raise 'No any field'
+
+        field.swap(first=cmd.first, second=cmd.second)
+        uow.commit()
 
 EVENT_HANDLERS = {
-
+    events.Killed: [shift],
+    events.Shifted: [fill],
+    events.Filled: [fill_kill],
+    events.Swaped: [fill_kill]
 }  # type: Dict[Type[events.Event], List[Callable]]
 
 COMMAND_HANDLERS = {
     commands.FillInit: fill_init,
+    commands.Swap: swap,
 }  # type: Dict[Type[commands.Command], Callable]

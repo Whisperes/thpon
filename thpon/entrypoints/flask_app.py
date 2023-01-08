@@ -11,6 +11,7 @@ bus = bootstrap.bootstrap()
 @app.route("/", methods=["get"])
 def hello():
     return "we are here"
+
 @app.route("/add_field/<fid>", methods=["get"])
 def create_new(fid):
     cmd = commands.FillInit(fid=fid)

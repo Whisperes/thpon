@@ -8,13 +8,19 @@ from thpon.domain.model import Field
 class Command:
     fid: int
 
+@dataclass()
 class FillInit(Command):
     pass
 
+@dataclass()
 class Fill(Command):
     pass
-class Switch(Command):
-    pass
+@dataclass()
+class Swap(Command):
+    first: tuple
+    second: tuple
+
+@dataclass()
 class Kill(Command):
     pass
 

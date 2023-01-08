@@ -34,12 +34,13 @@ class MessageBus:
                 raise Exception(f"{message} was not an Event or Command")
 
     def handle_event(self, event: events.Event):
-        for handler in self.event_handlers[type(event)]:
+        for handler in self.event_handlers[event.__class__]:
             try:
                 logger.debug("handling event %s with handler %s", event, handler)
                 handler(event)
                 self.queue.extend(self.uow.collect_new_events())
             except Exception:
+                raise
                 logger.exception("Exception handling event %s", event)
                 continue
 

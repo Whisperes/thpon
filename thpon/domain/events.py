@@ -1,12 +1,24 @@
+from dataclasses import dataclass
 
+@dataclass()
 class Event:
-    pass
-class Switched(Event):
-    fid: str
+    fid: int
+
+@dataclass()
+class Swaped(Event):
+    fid: int
     l: tuple
     r: tuple
+
+@dataclass()
 class Killed(Event):
-    fid: str
-class Filleed(Event):
-    fid: str
+    score: int
+
+@dataclass()
+class Shifted(Event):
+    pass
+
+@dataclass()
+class Filled(Event):
+    pass
 
