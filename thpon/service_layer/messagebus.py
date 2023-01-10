@@ -8,6 +8,8 @@ if TYPE_CHECKING:
     from thpon import unit_of_work
 
 logger = logging.getLogger(__name__)
+logger.setLevel('DEBUG')
+logger.addHandler(logging.StreamHandler())
 
 Message = Union[commands.Command, events.Event]
 
@@ -48,8 +50,9 @@ class MessageBus:
         logger.debug("handling command %s", command)
         try:
             handler = self.command_handlers[type(command)]
-            handler(command)
+            answer = handler(command)
             self.queue.extend(self.uow.collect_new_events())
+            return answer
         except Exception:
             logger.exception("Exception handling command %s", command)
             raise

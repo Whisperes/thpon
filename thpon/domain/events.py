@@ -13,6 +13,7 @@ class Swaped(Event):
 @dataclass()
 class Killed(Event):
     score: int
+    settos: list
 
 @dataclass()
 class Shifted(Event):

@@ -7,7 +7,8 @@ def test_element():
 
 def test_Field_init():
     id = 1
-    f1 = Field(id)
+    rule = Rule(x_len=0, y_len=20)
+    f1 = Field(id, rule)
     f1.fill_init()
     assert isinstance(f1.net[0][0], Element)
     settos = f1.find_setto()

@@ -18,6 +18,7 @@ def fill_init(cmd: commands.FillInit,
 
         field.fill_init()
         uow.commit()
+    return field
 
 def fill_kill(event: events.Killed,
               uow: unit_of_work.AbstractUnitOfWork):

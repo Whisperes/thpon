@@ -2,14 +2,73 @@ from dataclasses import dataclass
 from typing import List
 from thpon.domain import events
 
+@dataclass
+class Element:
+    id: int
+    score_multiplicator: int = 1
+
+    def __str__(self):
+        return self.__class__.__name__[0]
+
+
+@dataclass
+class RedElement(Element):
+    id: int = 2
+    color: tuple = (255, 0, 0)
+
+@dataclass
+class BlueElement(Element):
+    id: int = 1
+    color: tuple = (0, 0, 255)
+
+@dataclass
+class GreenElement(Element):
+    id: int = 3
+    color: tuple = (0, 255, 0)
+
+@dataclass
+class YellowElement(Element):
+    id: int = 4
+    color: tuple = (255, 255, 0)
+
+@dataclass
+class PurpleElement(Element):
+    id: int = 5
+    color: tuple = (255, 0, 255)
+
+preset = [RedElement(), BlueElement(), PurpleElement(), YellowElement(), GreenElement()]
+
+# Todo: do in in the function
+@dataclass
+class Rule:
+    x_len: int = 5
+    y_len: int = 5
+
+    @property
+    def colors(self):
+        return preset
+
+
+@dataclass()
+class Setto():
+    color: Element
+    length: int
+    els: list
+
+
 class Field:
-    def __init__(self, id=None):
+    def __init__(self, id: int =None, rule: Rule = None):
         if id is None:
             import random
             self.id = random.randint(0, 10000)
         else:
             self.id = id
-        self.rule = Rule()
+
+        if rule is None:
+            self.rule = Rule()
+        else:
+            self.rule = rule()
+
         self.net = [[]]
         self.events = []
         self.score = 0
@@ -24,15 +83,16 @@ class Field:
     def find_setto(self):
         list_of_setto = []
 
-        for x in range(self.rule.x_len):
-            for y in range(self.rule.y_len):
+        for x in range(0, self.rule.x_len):
+            for y in range(0, self.rule.y_len):
                 if y == 0:
                     l = 1
                     old = self.net[x][y]
-                elif old == self.net[x][y] and y==self.rule.y_len-1 and l >= 3:
-                    list_of_setto.append(Setto(old, l, [(x, y - e) for e in range(l)]))
                 elif old == self.net[x][y]:
                     l += 1
+                    if y==(self.rule.y_len-1) and l >= 3:
+                        list_of_setto.append(Setto(old, l, [(x, y - e) for e in range(l)]))
+                        l = 1
                 elif old != self.net[x][y] and l >= 3:
                     list_of_setto.append(Setto(old, l, [(x, y - 1 - e) for e in range(l)]))
                     l = 1
@@ -46,10 +106,11 @@ class Field:
                 if x == 0:
                     l = 1
                     old = self.net[x][y]
-                elif old == self.net[x][y] and x==self.rule.x_len-1 and l >= 3:
-                    list_of_setto.append(Setto(old, l, [(x - e, y ) for e in range(l)]))
                 elif old == self.net[x][y]:
                     l += 1
+                    if x == (self.rule.x_len - 1) and l >= 3:
+                        list_of_setto.append(Setto(old, l, [(x - 1 - e, y) for e in range(l)]))
+                        l = 1
                 elif old != self.net[x][y] and l >= 3:
                     list_of_setto.append(Setto(old, l, [(x - 1 - e, y ) for e in range(l)]))
                     l = 1
@@ -68,7 +129,7 @@ class Field:
                     self.net[p[0]][p[1]]=None
         self.score += score
         if score>0:
-            self.events.append(events.Killed(self.id, score=score))
+            self.events.append(events.Killed(self.id, score=score, settos=settos))
 
     def swap(self, first, second):
         #TODO if not neighboors
@@ -85,65 +146,10 @@ class Field:
 
     def fill_nones(self):
         from random import seed, choice
-        seed(self.id, version=2)
+        # seed(self.id, version=2)
 
         for x in range(self.rule.x_len):
             for y in range(self.rule.y_len):
                 if self.net[x][y] is None:
                     self.net[x][y] = choice(self.rule.colors)
         self.events.append(events.Filled(self.id))
-
-
-@dataclass
-class Element:
-    id: int
-    score_multiplicator: int = 1
-
-    def __str__(self):
-        return self.__class__.__name__[0]
-
-
-@dataclass
-class RedElement(Element):
-    id: int = 2
-
-
-@dataclass
-class BlueElement(Element):
-    id: int = 1
-
-
-@dataclass
-class GreenElement(Element):
-    id: int = 3
-
-
-@dataclass
-class YellowElement(Element):
-    id: int = 4
-
-
-@dataclass
-class PurpleElement(Element):
-    id: int = 5
-
-
-preset = [RedElement(), BlueElement(), PurpleElement(), YellowElement(), GreenElement()]
-
-
-# Todo: do in in the function
-@dataclass
-class Rule:
-    x_len: int = 1
-    y_len: int = 20
-
-    @property
-    def colors(self):
-        return preset
-
-
-@dataclass()
-class Setto():
-    color: Element
-    length: int
-    els: list
