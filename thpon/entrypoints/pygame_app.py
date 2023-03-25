@@ -10,17 +10,9 @@ bus.handle(cmd)
 fld = bus.uow.fields.get(fid)
 
 #
-# pygame (simple) template - by furas
-#
 # https://github.com/furas/my-python-codes/tree/master/pygame/__template__/
 #
 
-# ---------------------------------------------------------------------
-
-__author__ = 'Bartlomiej "furas" Burek'
-__webpage__ = 'http://blog.furas.pl'
-
-# ---------------------------------------------------------------------
 
 import pygame
 
@@ -29,9 +21,6 @@ import pygame
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 400
